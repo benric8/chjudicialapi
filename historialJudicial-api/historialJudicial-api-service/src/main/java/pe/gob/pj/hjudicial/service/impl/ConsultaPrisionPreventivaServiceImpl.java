@@ -105,7 +105,7 @@ public class ConsultaPrisionPreventivaServiceImpl implements ConsultaPrisionPrev
 			ExecutorService pool = Executors.newFixedThreadPool(size);
 			Set<Future<List<PrisionPreventivaDTO>>> lstResHilos = new HashSet<Future<List<PrisionPreventivaDTO>>>(0);
 			for (DataSourceDTO dataSource : lstDataSource) {
-				log.info("DATASOURCE {}",dataSource);
+				log.info("DATASOURCE {}",dataSource.getNombreDB());
 				Callable<List<PrisionPreventivaDTO>> callable = new ConsultaPrisionPreventivaPorDniCallable(cuo, 
 						numeroDocumento, dataSource, consultaPrisionPreventivaDao);
 				Future<List<PrisionPreventivaDTO>> future = pool.submit(callable);

@@ -60,26 +60,26 @@ public class ConsultaPrisionPreventivaDaoImpl implements ConsultaPrisionPreventi
 			urlDatasourse.append("/");
 			urlDatasourse.append(dataSource.getNombreDB());		
 			
-			String claveDesencriptada="";
-			
-			if(dataSource.getPassword()==null) {
-				claveDesencriptada="";
-			}else {
-				try {
-					claveDesencriptada = EncryptUtils.decryptPastFrass(dataSource.getPassword(),ConfiguracionPropiedades.getInstance().getProperty(ConstantesProject.PjSeguridad.SECRET_TOKEN).toCharArray());
-				}catch(Exception e) {
-					e.printStackTrace();
-					log.error("{} {}", cuo, "Ocurrió un error al intentar desencriptar la clave de la conexión a la corte.");
-					
-				
-				}
-			}
+			/*
+			 * String claveDesencriptada="";
+			 * 
+			 * if(dataSource.getPassword()==null) { claveDesencriptada=""; }else { try {
+			 * claveDesencriptada = EncryptUtils.decryptPastFrass(dataSource.getPassword(),
+			 * ConfiguracionPropiedades.getInstance().getProperty(ConstantesProject.
+			 * PjSeguridad.SECRET_TOKEN).toCharArray()); }catch(Exception e) {
+			 * e.printStackTrace(); log.error("{} {}", cuo,
+			 * "Ocurrió un error al intentar desencriptar la clave de la conexión a la corte."
+			 * );
+			 * 
+			 * 
+			 * } }
+			 */
 			
 			DriverManagerDataSource driverDataSource= new DriverManagerDataSource(); 			
 			driverDataSource.setUrl(urlDatasourse.toString());
 			driverDataSource.setDriverClassName(dataSource.getDriverClassName());	
 			driverDataSource.setUsername(dataSource.getUserName());
-			driverDataSource.setPassword(claveDesencriptada);
+			driverDataSource.setPassword(dataSource.getPassword());
 			
 				
 				
@@ -87,15 +87,15 @@ public class ConsultaPrisionPreventivaDaoImpl implements ConsultaPrisionPreventi
 			
 			
 			Object[] params = {
-					numeroDocumento
+					numeroDocumento,"","",""
 					};
 			
 			int[] tipo = { 
-					Types.VARCHAR 
+					Types.VARCHAR ,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR 
 					};
 			
-			String esquema = EdicionSybase.getEdicionPorNombre(dataSource.getEsquema()).getEsquema();
-			String sqlPrisionPreventiva = "exec ".concat(esquema).concat(".").concat(QueryUtils.Sij.QUERY_CONSULTAR_PRISION_PREVENTIVA_DNI);
+			//String esquema = EdicionSybase.getEdicionPorNombre(dataSource.getEsquema()).getEsquema();
+			String sqlPrisionPreventiva = "exec ".concat(dataSource.getEsquema()).concat(".").concat(QueryUtils.Sij.QUERY_CONSULTAR_PRISION_PREVENTIVA);
 			
 			log.info("{} Conexión Corte:  {}", cuo, dataSource.getNomSistema());
 			log.info("{} Ejecución: {}",cuo,sqlPrisionPreventiva);
@@ -125,6 +125,8 @@ public class ConsultaPrisionPreventivaDaoImpl implements ConsultaPrisionPreventi
 					});
 			
 			
+			
+			
 		} catch (Exception e) {
 			log.error("cuo, Ocurrio un error consultando al SP usp_ListadoPrisionPrevDni de la base de datos: {}", cuo, dataSource.getCodigoBd());
 			log.error("{} Detalle del error: {}", cuo, e.getMessage());
@@ -148,26 +150,26 @@ public class ConsultaPrisionPreventivaDaoImpl implements ConsultaPrisionPreventi
 			urlDatasourse.append("/");
 			urlDatasourse.append(dataSource.getNombreDB());		
 			
-			String claveDesencriptada="";
-			
-			if(dataSource.getPassword()==null) {
-				claveDesencriptada="";
-			}else {
-				try {
-					claveDesencriptada = EncryptUtils.decryptPastFrass(dataSource.getPassword(),ConfiguracionPropiedades.getInstance().getProperty(ConstantesProject.PjSeguridad.SECRET_TOKEN).toCharArray());
-				}catch(Exception e) {
-					e.printStackTrace();
-					log.error("{} {}", cuo, "Ocurrió un error al intentar desencriptar la clave de la conexión a la corte.");
-					
-				
-				}
-			}
+			/*
+			 * String claveDesencriptada="";
+			 * 
+			 * if(dataSource.getPassword()==null) { claveDesencriptada=""; }else { try {
+			 * claveDesencriptada = EncryptUtils.decryptPastFrass(dataSource.getPassword(),
+			 * ConfiguracionPropiedades.getInstance().getProperty(ConstantesProject.
+			 * PjSeguridad.SECRET_TOKEN).toCharArray()); }catch(Exception e) {
+			 * e.printStackTrace(); log.error("{} {}", cuo,
+			 * "Ocurrió un error al intentar desencriptar la clave de la conexión a la corte."
+			 * );
+			 * 
+			 * 
+			 * } }
+			 */
 			
 			DriverManagerDataSource driverDataSource= new DriverManagerDataSource(); 			
 			driverDataSource.setUrl(urlDatasourse.toString());
 			driverDataSource.setDriverClassName(dataSource.getDriverClassName());	
 			driverDataSource.setUsername(dataSource.getUserName());
-			driverDataSource.setPassword(claveDesencriptada);
+			driverDataSource.setPassword(dataSource.getPassword());
 			
 				
 				
@@ -182,8 +184,8 @@ public class ConsultaPrisionPreventivaDaoImpl implements ConsultaPrisionPreventi
 					Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR 
 					};
 			
-			String esquema = EdicionSybase.getEdicionPorNombre(dataSource.getEsquema()).getEsquema();
-			String sqlPrisionPreventiva = "exec ".concat(esquema).concat(".").concat(QueryUtils.Sij.QUERY_CONSULTAR_PRISION_PREVENTIVA_NOMBRES);
+			//String esquema = EdicionSybase.getEdicionPorNombre(dataSource.getEsquema()).getEsquema();
+			String sqlPrisionPreventiva = "exec ".concat(dataSource.getEsquema()).concat(".").concat(QueryUtils.Sij.QUERY_CONSULTAR_PRISION_PREVENTIVA);
 			
 			log.info("{} Conexión Corte:  {}", cuo, dataSource.getNomSistema());
 			log.info("{} Ejecución: {}",cuo,sqlPrisionPreventiva);
