@@ -3,9 +3,10 @@
  */
 package pe.gob.pj.hjudicial.service;
 
-import pe.gob.pj.client.reniec.consultas.ws.ConsultaReniec;
+/*import pe.gob.pj.client.reniec.consultas.ws.ConsultaReniec;
 import pe.gob.pj.client.reniec.consultas.ws.ConsultaReniecPortType;
-import pe.gob.pj.client.reniec.consultas.ws.ConsultaReniecResponse;
+import pe.gob.pj.client.reniec.consultas.ws.ConsultaReniecResponse;*/
+import pe.gob.pj.hjudicial.restclient.reniec.PersonaDTO;
 
 /**
  * <pre>
@@ -35,6 +36,7 @@ public interface ReniecWsService {
 	 * @return Los datos encontrados
 	 * @throws Exception La excepción controlada que pueda ocurrir.
 	 */
-	public ConsultaReniecResponse consultaReniec(ConsultaReniecPortType port, ConsultaReniec consultaReniecRequest) throws Exception;
+	//public ConsultaReniecResponse consultaReniec(ConsultaReniecPortType port, ConsultaReniec consultaReniecRequest) throws Exception;
+	PersonaDTO obtenerPersonaPorDNI(String dni, String pcName, String ipAddress, String macAddress, String usuario) throws Exception;
 	
 }

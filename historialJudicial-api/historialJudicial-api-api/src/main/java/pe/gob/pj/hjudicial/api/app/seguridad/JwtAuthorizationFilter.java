@@ -128,10 +128,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
 				if (StringUtils.isNotEmpty(username)) {
 					request.setAttribute(ConstantesProject.AUD_CUO, cuo);
-					if(urlReq.endsWith("refresh") || urlReq.endsWith("login")) {
+					if(urlReq.endsWith("refresh") || urlReq.endsWith("login") ) {
 						request.setAttribute(ConstantesProject.REMOTE_IP, remoteIp);
 						request.setAttribute(ConstantesProject.CLAIM_LIMIT, limiteRefreshClaim);
-					} else if (urlReq.endsWith("buscarMarcacion")) {
+					} else if (urlReq.endsWith("buscarMarcacion") || urlReq.endsWith("consultaReniec")) {
 						request.setAttribute("usuario", usuario);
 					}
 					return new UsernamePasswordAuthenticationToken(username, null, authorities);

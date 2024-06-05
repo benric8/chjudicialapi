@@ -1,6 +1,7 @@
 package pe.gob.pj.hjudicial.service.impl;
 
 import java.io.Serializable;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,14 +92,18 @@ public class SunatWsServiceImpl implements SunatWsService, Serializable {
 		return seguridad;
 	}
 	
-	private Auditoria getAuditoriaPide(){
+	private Auditoria getAuditoriaPide() throws SocketException{
 		Auditoria auditoria = new Auditoria();		
-		auditoria.setIpPc(UtilsProject.getIp());
-		auditoria.setMacAddressPc(UtilsProject.getMac());
-		auditoria.setNombreSo("");
-		auditoria.setPcName(UtilsProject.getPc());
-		auditoria.setUsuarioRed("SCPAPI");
-		auditoria.setUsuarioSis("SCPAPI");		
+		try {
+			auditoria.setIpPc(UtilsProject.getIPAddress(true));
+			auditoria.setMacAddressPc(UtilsProject.getMACAddress());
+			auditoria.setNombreSo("");
+			auditoria.setPcName(UtilsProject.getPCName());
+			auditoria.setUsuarioRed("SCPAPI");
+			auditoria.setUsuarioSis("SCPAPI");		
+		} catch(SocketException e) {
+			throw e;
+		}
 		return auditoria;
 	}
 

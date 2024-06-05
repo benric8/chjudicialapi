@@ -3,6 +3,7 @@
  */
 package pe.gob.pj.hjudicial.dao.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**

@@ -9,6 +9,7 @@ public class ConstantesProject {
 	public static final int NRO_VECES_REFRESH_CON_TOKEN_EXPIRADO = 100;
 	
 	public static final String VERSION = "1.0.0";
+	public static final String SHORT_NAME_APP = "HJUDICIAL";
 
 	public static final String ESQUEMA_SEGURIDAD = "seguridad";
 	public static final String ESQUEMA_HJUDICIAL = "historialjudicial";
@@ -104,7 +105,12 @@ public class ConstantesProject {
 		
 		public static final String ENDPOINT = "configuracion.reniec.endpoint";
 		public static final String TIMEOUT = "configuracion.reniec.timeout";
-		public static final String DNI_CONSULTA = "configuracion.reniec.dniconsulta";
+		public static final String USUARIO_RENIEC = "configuracion.reniec.usuario";
+		public static final String PASSWORD_RENIEC = "configuracion.reniec.password";
+		public static final String CLIENTE_RENIEC = "configuracion.reniec.cliente";
+		public static final String ROL_RENIEC = "configuracion.reniec.rol";
+		public static final String CODIGO_APLICATIVO_RENIEC = "configuracion.reniec.codigo.aplicativo";
+		public static final String MOTIVO_RENIEC = "configuracion.reniec.motivo";
 	}
 	
 	public class PjSeguridad{

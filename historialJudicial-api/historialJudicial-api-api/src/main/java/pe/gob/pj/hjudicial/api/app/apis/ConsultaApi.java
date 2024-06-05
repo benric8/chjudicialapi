@@ -36,6 +36,8 @@ import pe.gob.pj.hjudicial.dao.utils.ConfiguracionPropiedades;
 import pe.gob.pj.hjudicial.dao.utils.ConstantesProject;
 import pe.gob.pj.hjudicial.dao.utils.ReniecUtils;
 import pe.gob.pj.hjudicial.dao.utils.UtilsProject;
+import pe.gob.pj.hjudicial.restclient.reniec.PersonaDTO;
+import pe.gob.pj.hjudicial.restclient.reniec.ReniecResponse;
 import pe.gob.pj.hjudicial.service.ConsultaCondenasService;
 import pe.gob.pj.hjudicial.service.ConsultaPrisionPreventivaService;
 import pe.gob.pj.hjudicial.service.ReniecWsService;
@@ -135,40 +137,46 @@ public class ConsultaApi implements Serializable{
 	}
 	
 	@RequestMapping(value = "/consultaReniec",  produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<GlobalResponseDTO> consultarPersonaReniecPorDni(@RequestAttribute String cuo, @RequestBody RequestReniecDTO request) {
+	public ResponseEntity<GlobalResponseDTO> consultarPersonaReniecPorDni(@RequestAttribute String cuo, @RequestBody RequestReniecDTO request, @RequestAttribute String usuario) {
 		GlobalResponseDTO res = new GlobalResponseDTO();
 		try {
 			if (null == request || null == request.getDni() || request.getDni().isEmpty()) {
 				res.setCodigo(ConstantesProject.C_400);
 				res.setDescripcion("El DNI no es válido.");
 			} else {
-				String endpoint = ConfiguracionPropiedades.getInstance().getProperty(ConstantesProject.Reniec.ENDPOINT);
-				String timeout = ConfiguracionPropiedades.getInstance().getProperty(ConstantesProject.Reniec.TIMEOUT);
-				String dniConsulta = ConfiguracionPropiedades.getInstance().getProperty(ConstantesProject.Reniec.DNI_CONSULTA);
-				ConsultaReniec consultaReniecRequest = new ConsultaReniec();
-				consultaReniecRequest.setReqDni(request.getDni());
-				consultaReniecRequest.setReqDniConsultante(dniConsulta);
-				consultaReniecRequest.setReqTipoConsulta(ConstantesProject.Reniec.TIPO_CONSULTA_POR_NUMERO_DNI);
-				consultaReniecRequest.setReqUsuario(ConstantesProject.USUARIO_CONSULTA_DEFAULT);
-				consultaReniecRequest.setReqIp(httpServletRequest.getRemoteAddr());
+				//ConsultaReniecResponse responseReniec = reniecWsService.consultaReniec(portType, consultaReniecRequest);
+				if(!(request.getPcOperacion()!=null)) {
+					request.setPcOperacion(UtilsProject.getPCName());
+				}
+				if(!(request.getIpOperacion()!=null)) {
+					request.setIpOperacion(UtilsProject.getIPAddress(true));
+				}
+				if(!(request.getMacOperacion()!=null)) {
+					request.setMacOperacion(UtilsProject.getMACAddress());
+				}
 				
-				ConsultaReniecPortType portType = ReniecUtils.getPortReniec(endpoint, Integer.parseInt(timeout));
-				ConsultaReniecResponse responseReniec = reniecWsService.consultaReniec(portType, consultaReniecRequest);
-				String[] arrayPersona = responseReniec.getResPersona().split("\t");
+				if (request.getUsuarioOperacion() == null) {
+				    request.setUsuarioOperacion(ConstantesProject.SHORT_NAME_APP);
+				} else {
+				    request.setUsuarioOperacion(usuario.split("-")[0]);
+				}
 				
-				if (null != arrayPersona && arrayPersona.length < 2) {
+				
+				PersonaDTO persona = reniecWsService.obtenerPersonaPorDNI(request.getDni(), request.getPcOperacion(), request.getIpOperacion(), request.getMacOperacion(), request.getUsuarioOperacion());
+				
+				
+				if (null != persona ) {
+					res.setCodigo(ConstantesProject.RPTA_1);
+					res.setDescripcion("La consulta a RENIEC se realizó con éxito.");
+					ResponseReniecDTO responseReniecDTO = new ResponseReniecDTO();
+					responseReniecDTO.setApellidoPaterno(persona.getPrimerApellido());
+					responseReniecDTO.setApellidoMaterno(persona.getSegundoApellido());
+					responseReniecDTO.setNombres(persona.getNombres());
+					res.setData(responseReniecDTO);
+				} else {
 					res.setCodigo(ConstantesProject.RPTA_1);
 					res.setDescripcion("No se encontraron resultados.");
 					res.setData(null);
-				} else {
-					ResponseReniecDTO resReniec = new ResponseReniecDTO();
-					resReniec.setApellidoPaterno(arrayPersona[2]);
-					resReniec.setApellidoMaterno(arrayPersona[3]);
-					resReniec.setNombres(arrayPersona[5]);
-					
-					res.setCodigo(ConstantesProject.RPTA_1);
-					res.setDescripcion("La consulta a RENIEC se realizó con éxito.");
-					res.setData(resReniec);
 				}
 			}
 		} catch (Exception e) {

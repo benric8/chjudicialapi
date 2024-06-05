@@ -25,5 +25,8 @@ public class RequestReniecDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String dni;
-
+	private String usuarioOperacion;
+	private String pcOperacion;
+	private String ipOperacion;
+	private String macOperacion;
 }

@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -17,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Random;
 import java.text.Normalizer;
 import java.util.regex.Pattern;
+
+import org.apache.http.conn.util.InetAddressUtils;
 
 public class UtilsProject {
 
@@ -509,74 +511,59 @@ public class UtilsProject {
 		return val;
 	}
 
-	public static String getPc() {
-		String pc = null;
-		try {
-			InetAddress addr;
-			addr = InetAddress.getLocalHost();
-			pc = addr.getHostName();
-		} catch (UnknownHostException e) {
-			pc = "host";
-		}
+	public static String getPCName() {
+		 try {
+	            String computername=InetAddress.getLocalHost().getHostName();
+	            return computername;
+	        }catch (Exception e){
 
-		return pc;
+	        }
+	        return "";
 	}
 
-	public static String getIp() {
-		String ip = null;
+	public static String getIPAddress(boolean useIPv4) {
 		try {
-			ip = InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			ip = "0.0.0.0";
-		}
-
-		return ip;
+            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface intf : interfaces) {
+                List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+                for (InetAddress addr : addrs) {
+                    if (!addr.isLoopbackAddress()) {
+                        String sAddr = addr.getHostAddress().toUpperCase();
+                        boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
+                        if (useIPv4) {
+                            if (isIPv4)
+                                return sAddr;
+                        } else {
+                            if (!isIPv4) {
+                                int delim = sAddr.indexOf('%'); 
+                                return delim<0 ? sAddr : sAddr.substring(0, delim);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) { } 
+        return "";
 	}
 
-	public static String getMac() {
-		String firstInterface = null;
-		Map<String, String> addressByNetwork = new HashMap<>();
-		Enumeration<NetworkInterface> networkInterfaces = null;
+	public static String getMACAddress()  throws SocketException {
 		try {
-			networkInterfaces = NetworkInterface.getNetworkInterfaces();
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if (networkInterfaces != null) {
-			while (networkInterfaces.hasMoreElements()) {
-				NetworkInterface network = networkInterfaces.nextElement();
-
-				byte[] bmac = null;
-				try {
-					bmac = network.getHardwareAddress();
-				} catch (SocketException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				if (bmac != null) {
-					StringBuilder sb = new StringBuilder();
-					for (int i = 0; i < bmac.length; i++) {
-						sb.append(String.format("%02X%s", bmac[i], (i < bmac.length - 1) ? "-" : ""));
-					}
-
-					if (sb.toString().isEmpty() == false) {
-						addressByNetwork.put(network.getName(), sb.toString());
-
-					}
-
-					if (sb.toString().isEmpty() == false && firstInterface == null) {
-						firstInterface = network.getName();
-					}
-				}
-			}
-
-			if (firstInterface != null) {
-				return addressByNetwork.get(firstInterface);
-			}
-		}
-
-		return firstInterface;
+        	Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        	while (networkInterfaces.hasMoreElements()) {
+        		NetworkInterface networkInterface = networkInterfaces.nextElement();
+        		byte[] mac = networkInterface.getHardwareAddress();
+        		if (mac != null) {
+        			StringBuilder macAddress = new StringBuilder();
+        			for (int i = 0; i < mac.length; i++) {
+        				macAddress.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+        			}
+        			return macAddress.toString();
+        		}
+        	}
+        } catch (Exception ex) { } 
+        return "";
 	}
+	
+	
 
 }
